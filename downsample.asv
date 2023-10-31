@@ -1,0 +1,26 @@
+% Specify the input folder containing audio files
+inputFolder = 'path_to_input_folder'; % Replace with the path to your input folder
+outputFolder = 'path_to_output_folder'; % Replace with the path to your output folder
+targetSampleRate = 16000; % Desired sample rate
+
+% Get a list of audio files in the input folder
+audioFiles = dir(fullfile(inputFolder, '*.wav')); % Change the file extension if your audio files are in a different format
+
+% Loop through each audio file and downsample it
+for i = 1:length(audioFiles)
+    % Read the audio file
+    audioFileName = fullfile(inputFolder, audioFiles(i).name);
+    [audio, originalSampleRate] = audioread(audioFileName);
+    
+    % Downsample to the target sample rate
+    audio = resample(audio, targetSampleRate, originalSampleRate);
+    
+    % Construct the output file name
+    [~, baseFileName, ext] = fileparts(audioFiles(i).name);
+    outputFileName = fullfile(outputFolder, [baseFileName, '_downsampled.wav']);
+    
+    % Write the downsampled audio to the output folder
+    audiowrite(outputFileName, audio, targetSampleRate);
+    
+    fprintf('Processed: %s\n', audioFiles(i).name);
+end
